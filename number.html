@@ -1,0 +1,152 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<div> 
+         	guess number
+         	<input type="number" id="input" min="1" max="100">
+         	<input type="submit" onclick="submit()">
+         	<input type="submit" onclick="newGame()" value="NEW GAME" id="newGame">
+        </div>
+		<div>
+			Tries:
+			<div id="tries" class="inn"></div>
+			Score:
+			<div id="score" class="inn">0</div>
+			<br>
+			<div id="min" class="inn"></div>...<div id="max" class="inn"></div>
+	        <div id="result" ></div> 		
+			<div id="number"></div>
+		</div>
+	</body>
+</html>
+
+<style type="text/css">
+	#number{
+		font-size: 50px;
+		color:white ;
+		width: 20px;
+	}
+/*	#number:hover{
+		font-size: 99px;
+		color: cyan;
+	}*/
+     div {
+     	font-size: 50px;
+     }
+     input {
+     	font-size: 50px;
+     }
+    #min{
+    	color: blue;
+    }
+ 	#max{
+    	color: red;
+    }
+    .inn{
+    	display:inline;
+    }
+</style>
+
+<script type="text/javascript">
+	const randomNumberElement = document.getElementById("number")
+	const inputElement = document.getElementById("input")
+	inputElement.focus()
+	const triesElement = document.getElementById("tries")
+	const minElement = document.getElementById("min")
+	const maxElement = document.getElementById("max")
+	const newGameElement = document.getElementById("newGame") 
+	const resultElement = document.getElementById("result")
+	const scoreElement = document.getElementById("score")
+	
+	let totalScore
+	if (localStorage.totalScore == null)
+		totalScore = 0
+	else 
+		totalScore = parseInt(localStorage.totalScore)
+
+	let randomNumber
+	let tries
+	let minNumber
+	let maxNumber
+    let games = 0
+   	newGame()
+
+ 	function submit() {//parseInt('x')
+ 		inputElement.focus()
+		const input = parseInt(inputElement.value)
+		if (isNaN(input))
+			return
+		if (input >= maxNumber || input <= minNumber){
+			inputElement.value = ""
+			return	
+		}
+		
+		if(randomNumber == input){
+			resultElement.style.color = "green";
+			resultElement.innerHTML = "you won!!!"	  
+			newGameElement.style.display = 'block';
+			games++
+			setMin(input)
+			calculateScore()
+		}
+		else if (randomNumber > input){
+			resultElement.style.color = "blue";
+			resultElement.innerHTML	= "bigger"
+ 			
+ 			setMin(input)
+		}
+		else if (randomNumber < input){
+			resultElement.style.color = "red";
+			resultElement.innerHTML	= "lower"
+
+ 			setMax(input)
+		}
+
+		tries++ 
+		setTries(tries)
+	}
+
+	function newGame(){
+		resultElement.innerHTML = ""
+		setTries(0)
+		setMin(0)
+		setMax(100)
+		newRandomNumber()
+		newGameElement.style.display = 'none';
+		localStorage
+	}
+
+	function setMin(min){
+		minNumber = min
+		minElement.innerHTML = minNumber
+		inputElement.min = minNumber
+	}
+	function setMax(max){
+		maxNumber = max
+		maxElement.innerHTML = maxNumber
+		inputElement.max = maxNumber
+	}
+	function setTries(newTries){
+		tries = newTries
+		triesElement.innerHTML = tries
+
+	}
+	function newRandomNumber(){
+    	randomNumber = Math.ceil(Math.random()*99) //1...99
+    	//ssrandomNumberElement.innerHTML = randomNumber
+	}
+	function calculateScore(){
+		const limit = 10
+		let score = limit - tries 
+		if (score < 0)
+			setScore(-10)
+		else
+			setScore(score*score)
+	}
+	function setScore(newScore){
+		totalScore += newScore
+		scoreElement.innerHTML = totalScore
+		localStorage.totalScore = totalScore
+	}
+</script>
