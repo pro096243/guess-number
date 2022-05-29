@@ -3,21 +3,30 @@
 	<head>
 	</head>
 	<body>
-		<div> 
-         	guess number
-         	<input type="number" id="input" min="1" max="100">
-         	<input type="submit" onclick="submit()">
-         	<input type="submit" onclick="newGame()" value="NEW GAME" id="newGame">
-        </div>
-		<div>
+		<div id="newName">
+			<input type="text" id="nickname" placeholder="nickname (3-16 characters)">
+			<input type="submit" onclick="newName()">
+			<div id="nameError"></div>
+		</div>
+		<div id="game">
+			<div id="name" class="bold">
+				
+			</div>
 			Tries:
 			<div id="tries" class="inn"></div>
 			Score:
 			<div id="score" class="inn">0</div>
-			<br>
-			<div id="min" class="inn"></div>...<div id="max" class="inn"></div>
-	        <div id="result" ></div> 		
-			<div id="number"></div>
+			<div> 
+	         	guess number
+	         	<input type="number" id="input" min="1" max="100">
+	         	<input type="submit" onclick="submit()">
+	         	<input type="submit" onclick="newGame()" value="NEW GAME" id="newGame">
+	        </div>
+			<div>
+				<div id="min" class="inn"></div>...<div id="max" class="inn"></div>
+		        <div id="result" ></div> 		
+				<div id="number"></div>
+			</div>
 		</div>
 	</body>
 </html>
@@ -47,12 +56,20 @@
     .inn{
     	display:inline;
     }
+    .bold{
+    	font-weight: bold;
+    }
 </style>
 
 <script type="text/javascript">
+
+	const gameElement = document.getElementById("game")
+	gameElement.style.display = 'none';
 	const randomNumberElement = document.getElementById("number")
 	const inputElement = document.getElementById("input")
-	inputElement.focus()
+	//inputElement.focus()
+	const nameElement = document.getElementById("nickname")
+	nameElement.focus()
 	const triesElement = document.getElementById("tries")
 	const minElement = document.getElementById("min")
 	const maxElement = document.getElementById("max")
@@ -65,6 +82,7 @@
 		totalScore = 0
 	else 
 		totalScore = parseInt(localStorage.totalScore)
+	showScore()
 
 	let randomNumber
 	let tries
@@ -141,13 +159,37 @@
 		const limit = 10
 		let score = limit - tries 
 		if (score < 0)
-			setScore(-10)
+			addScore(-10)
 		else
-			setScore(score*score)
+			addScore(score*score)
 	}
-	function setScore(newScore){
+	function addScore(newScore){
 		totalScore += newScore
+		showScore()
+	}
+	function showScore()
+	{
 		scoreElement.innerHTML = totalScore
 		localStorage.totalScore = totalScore
+	}
+
+
+	function newName(){
+		const newName = nameElement.value
+		const nameErrorElement = document.getElementById("nameError")
+		nameErrorElement.style.color = "red"
+
+		if ( newName.length < 3 || newName.length > 16 ){
+			nameErrorElement.innerHTML = "nickname must be more than 3 and less than 16 characters long"
+			nameElement.focus()
+			return
+		}
+
+		nameErrorElement.innerHTML = ""
+		const newNameElement = document.getElementById("newName")
+		newNameElement.style.display = 'none';
+
+		document.getElementById("name").innerHTML = newName
+		gameElement.style.display = 'block';
 	}
 </script>
