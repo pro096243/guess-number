@@ -76,14 +76,16 @@
 	const newGameElement = document.getElementById("newGame") 
 	const resultElement = document.getElementById("result")
 	const scoreElement = document.getElementById("score")
-	
-	let totalScore
-	if (localStorage.totalScore == null)
-		totalScore = 0
-	else 
-		totalScore = parseInt(localStorage.totalScore)
-	showScore()
 
+	let allPlayers
+
+	if (localStorage.allPlayers == null)
+		allPlayers = []
+	else
+		allPlayers = JSON.parse(localStorage.allPlayers)
+	
+	let currentPlayer
+	
 	let randomNumber
 	let tries
 	let minNumber
@@ -164,16 +166,13 @@
 			addScore(score*score)
 	}
 	function addScore(newScore){
-		totalScore += newScore
+		currentPlayer.score += newScore
 		showScore()
+		storePlayers()
 	}
-	function showScore()
-	{
-		scoreElement.innerHTML = totalScore
-		localStorage.totalScore = totalScore
+	function showScore(){
+		scoreElement.innerHTML = currentPlayer.score
 	}
-
-
 	function newName(){
 		const newName = nameElement.value
 		const nameErrorElement = document.getElementById("nameError")
@@ -191,5 +190,26 @@
 
 		document.getElementById("name").innerHTML = newName
 		gameElement.style.display = 'block';
+
+		for (i=0; i<allPlayers.length; i++){
+			let player = allPlayers[i]
+
+			if (player.name == newName) {
+				currentPlayer = player
+				break
+			}
+		}
+		if (currentPlayer == null){
+			currentPlayer = {}
+			currentPlayer.name = newName
+			currentPlayer.score = 0
+			allPlayers.push(currentPlayer)
+			storePlayers()
+ 		}
+		showScore()
+	}
+
+	function storePlayers() {
+		localStorage.allPlayers = JSON.stringify(allPlayers)
 	}
 </script>
